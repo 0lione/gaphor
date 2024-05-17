@@ -575,3 +575,32 @@ class AttachedPresentation(HandlePositionUpdate, Presentation[S]):
 
         self.update_shapes()
         self._connections.solve()
+
+
+class PresentationStyle:
+    def __init__(self, styleSheet: StyleSheet, elem) -> None:
+        self.styleSheet = styleSheet
+        self.style: Style = {}
+        self.type = elem.__class__.__name__
+        self.name = elem.name
+
+    def name_change(self, new_name: str):
+        if self.delete_elem():
+            self.name = new_name
+            self.styleSheet.new_style_elem(self)
+        self.name = new_name
+
+    def delete_elem(self):
+        return self.styleSheet.delete_style_elem(self.key())
+
+    def change_style(self, style: str, value):
+        if self.style.get(value) == value:
+            value = ""
+        self.style[style] = value
+        self.styleSheet.new_style_elem(self)
+
+    def key(self):
+        return f'{self.type}[name="{self.name}"]'
+
+    def __str__(self) -> str:
+        return f"{','.join(f'{k}:{v}' for k, v in self.style.items())}"

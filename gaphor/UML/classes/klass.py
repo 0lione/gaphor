@@ -6,6 +6,7 @@ from gaphor.core.modeling.properties import attribute
 from gaphor.diagram.presentation import (
     Classified,
     ElementPresentation,
+    PresentationStyle,
 )
 from gaphor.diagram.shapes import Box, CssNode, Text, draw_border, draw_top_separator
 from gaphor.diagram.support import represents
@@ -26,7 +27,6 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
 
     def __init__(self, diagram, id=None):
         super().__init__(diagram, id=id)
-
         self.watch("show_stereotypes", self.update_shapes).watch(
             "show_attributes", self.update_shapes
         ).watch("show_operations", self.update_shapes).watch(
@@ -34,6 +34,10 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
         ).watch("subject[NamedElement].namespace.name").watch(
             "subject[Classifier].isAbstract", self.update_shapes
         )
+
+        self._presentation_style = None
+        self.watch("subject[Class].name", self.test)
+
         attribute_watches(self, "Class")
         operation_watches(self, "Class")
         stereotype_watches(self)
@@ -44,12 +48,27 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
 
     show_operations: attribute[int] = attribute("show_operations", int, default=True)
 
+    @property
+    def presentation_style(self) -> PresentationStyle | None:
+        return self._presentation_style
+
+    @presentation_style.setter
+    def presentation_style(self, value: PresentationStyle | None = None):
+        self._presentation_style = value
+
     def additional_stereotypes(self):
         if isinstance(self.subject, UML.Stereotype):
             return [self.diagram.gettext("stereotype")]
         elif UML.recipes.is_metaclass(self.subject):
             return [self.diagram.gettext("metaclass")]
         return ()
+
+    def test(self, event=None):
+        if self.presentation_style is None:
+            self.presentation_style = PresentationStyle(
+                self.diagram.styleSheet, self.subject
+            )
+        self.presentation_style.name_change(self.subject.name)
 
     def update_shapes(self, event=None):
         self.shape = Box(

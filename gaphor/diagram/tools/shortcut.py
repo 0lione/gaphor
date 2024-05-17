@@ -21,7 +21,19 @@ def key_pressed(ctrl, keyval, keycode, state, event_manager):
     if keyval in (Gdk.KEY_Delete, Gdk.KEY_BackSpace):
         delete_selected_items(view, event_manager)
         return True
+    if keyval == Gdk.KEY_comma:
+        test(view, event_manager)
     return False
+
+
+def test(view: GtkView, event_manager):
+    diagram: Diagram = list(view.selection.selected_items)[0].diagram
+    item = list(view.selection.selected_items)[0]
+    try:
+        with Transaction(event_manager):
+            item.presentation_style.change_style("color", "red")
+    except:
+        pass
 
 
 def delete_selected_items(view: GtkView, event_manager):
