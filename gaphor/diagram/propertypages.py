@@ -319,6 +319,40 @@ class InternalsPropertyPage(PropertyPageBase):
 
         return builder.get_object("internals-editor")
 
+@PropertyPages.register(Element)
+class StylePropertyPage(PropertyPageBase):
+    """A button to open a easy-to-use CSS editor."""
+
+    order = 300
+
+    def __init__(self, subject):
+        super().__init__()
+        self.subject = subject
+        self.watcher = subject.watcher() if subject else None
+
+    def construct(self):
+        if not self.subject:
+            return
+
+        assert self.watcher
+
+        builder = new_builder(
+            "style-editor",
+            signals={
+                "open-style-editor": (self._on_open_style_editor,)
+            },
+        )
+
+        return builder.get_object("style-editor")
+
+    @transactional
+    def _on_open_style_editor(self, button):
+        print("Starting the opening of the style editor")
+        window = Gtk.Window(title="Style Editor")
+        window.set_default_size(800, 800)
+        window.set_visible(True)
+        print("Finishing the opening of the style editor")
+
 
 def presentation_class(subject):
     t = type(subject)
