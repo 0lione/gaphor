@@ -59,7 +59,7 @@ class StyleSheet(Element):
         self._compiled_style_sheet = CompiledStyleSheet(
             SYSTEM_STYLE_SHEET,
             f"diagram {{ font-family: {self._system_font_family} }}",
-            self.styleSheet + self.colorPickerResult,
+            self.colorPickerResult + self.styleSheet,
         )
 
     def new_compiled_style_sheet(self) -> CompiledStyleSheet:
@@ -81,12 +81,14 @@ class StyleSheet(Element):
         super().handle(event)
 
     def recover_style_elems(self):
-        for line in self.colorPickerResult.split("\n"):
-            parts = line.split("{")
-            if len(parts) == 2:
-                key = parts[0].strip()
-                value = parts[1].strip().rstrip("}").rstrip(";")
-                self.style_elems[key] = value
+        # for line in self.colorPickerResult.split("\n"):
+        #     parts = line.split("{")
+        #     if len(parts) == 2:
+        #         key = parts[0].strip()
+        #         value = parts[1].strip().rstrip("}").rstrip(";")
+        #         self.style_elems[key] = value
+        self.styleSheet += self.colorPickerResult
+        self.colorPickerResult = ""
 
     def update_style_elems(self):
         temp = ""
@@ -106,3 +108,8 @@ class StyleSheet(Element):
             self.compile_style_sheet()
             return True
         return False
+    
+    def translate_to_stylesheet(self, elem: str):
+        if self.style_elems.get(elem) is not None:
+            self.styleSheet += self.style_elems.get(elem)
+            self.delete_style_elem(elem)
