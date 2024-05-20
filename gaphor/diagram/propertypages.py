@@ -329,29 +329,35 @@ class StylePropertyPage(PropertyPageBase):
         super().__init__()
         self.subject = subject
         self.watcher = subject.watcher() if subject else None
+        self.propertypages_builder = new_builder("style-editor",
+            signals={"open-style-editor": (self._on_open_style_editor,), },
+        )
+        self.window = None
 
     def construct(self):
         if not self.subject:
             return
-
         assert self.watcher
-
-        builder = new_builder(
-            "style-editor",
-            signals={
-                "open-style-editor": (self._on_open_style_editor,)
-            },
-        )
-
-        return builder.get_object("style-editor")
+        return self.propertypages_builder.get_object("style-editor")
 
     @transactional
-    def _on_open_style_editor(self, button):
+    def _on_open_style_editor(self, button) :
         print("Starting the opening of the style editor")
-        window = Gtk.Window(title="Style Editor")
-        window.set_default_size(800, 800)
-        window.set_visible(True)
+        if self.window:
+            self.window.present()
+            return
+
+        window_builder = Gtk.Builder()
+        window_builder.add_from_file("gaphor/diagram/styleeditor.ui")
+        self.window = window_builder.get_object("style-editor")
+        self.window.connect("close-request", self.close)
+        self.window.present()
         print("Finishing the opening of the style editor")
+
+    def close(self, widget=None):
+        if self.window:
+            self.window.destroy()
+            self.window = None
 
 
 def presentation_class(subject):
