@@ -45,11 +45,21 @@ class Presentation(Matrices, Element, Generic[S]):
         self.watch("diagram", self._on_diagram_changed)
         self.watch("parent", self._on_parent_changed)
         self.matrix.add_handler(self._on_matrix_changed)
+        self._presentation_style = None
+
 
     subject: relation_one[S]
     diagram: relation_one[Diagram]
     parent: relation_one[Presentation]
     children: relation_many[Presentation]
+
+    @property
+    def presentation_style(self) -> PresentationStyle | None:
+        return self._presentation_style
+
+    @presentation_style.setter
+    def presentation_style(self, value: PresentationStyle | None = None):
+        self._presentation_style = value
 
     def request_update(self) -> None:
         """Mark this presentation object for update.

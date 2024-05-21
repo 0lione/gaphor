@@ -17,6 +17,7 @@ from gaphor.core.modeling.presentation import Presentation, S, literal_eval
 from gaphor.core.modeling.properties import attribute
 from gaphor.diagram.shapes import CssNode, Shape, Text, stroke, traverse_css_nodes
 from gaphor.diagram.text import TextAlign, middle_segment, text_point_at_line
+from gaphor.core.modeling.diagram import StyledItem
 
 DEFAULT_HEIGHT = 50
 DEFAULT_WIDTH = 100
