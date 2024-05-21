@@ -345,7 +345,7 @@ class StylePropertyPage(PropertyPageBase):
     @transactional
     def _on_open_style_editor(self, button) :
         if self.style_editor is None:
-            self.style_editor = StyleEditor(self._on_close_style_editor)
+            self.style_editor = StyleEditor(self.subject, self._on_close_style_editor)
         self.style_editor.present()
 
     def _on_close_style_editor(self):
