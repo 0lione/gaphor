@@ -18,6 +18,8 @@ from gaphor.core import transactional
 from gaphor.core.modeling import Diagram, Element, Presentation, qualifiedName
 from gaphor.i18n import gettext, translated_ui_string
 
+from gaphor.diagram.styleeditor import StyleEditor
+
 
 class LabelValue(GObject.Object):
     __gtype_name__ = "LabelValue"
@@ -332,7 +334,7 @@ class StylePropertyPage(PropertyPageBase):
         self.propertypages_builder = new_builder("style-editor",
             signals={"open-style-editor": (self._on_open_style_editor,), },
         )
-        self.window = None
+        self.style_editor = None
 
     def construct(self):
         if not self.subject:
@@ -343,21 +345,13 @@ class StylePropertyPage(PropertyPageBase):
     @transactional
     def _on_open_style_editor(self, button) :
         print("Starting the opening of the style editor")
-        if self.window:
-            self.window.present()
+        if self.style_editor:
+            self.style_editor.present()
             return
 
-        window_builder = Gtk.Builder()
-        window_builder.add_from_file("gaphor/diagram/styleeditor.ui")
-        self.window = window_builder.get_object("style-editor")
-        self.window.connect("close-request", self.close)
-        self.window.present()
+        self.style_editor = StyleEditor()
+        self.style_editor.present()
         print("Finishing the opening of the style editor")
-
-    def close(self, widget=None):
-        if self.window:
-            self.window.destroy()
-            self.window = None
 
 
 def presentation_class(subject):
