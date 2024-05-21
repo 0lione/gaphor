@@ -344,14 +344,12 @@ class StylePropertyPage(PropertyPageBase):
 
     @transactional
     def _on_open_style_editor(self, button) :
-        print("Starting the opening of the style editor")
-        if self.style_editor:
-            self.style_editor.present()
-            return
-
-        self.style_editor = StyleEditor()
+        if self.style_editor is None:
+            self.style_editor = StyleEditor(self._on_close_style_editor)
         self.style_editor.present()
-        print("Finishing the opening of the style editor")
+
+    def _on_close_style_editor(self):
+        self.style_editor = None
 
 
 def presentation_class(subject):
