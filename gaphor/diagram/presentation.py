@@ -578,17 +578,16 @@ class AttachedPresentation(HandlePositionUpdate, Presentation[S]):
 
 
 class PresentationStyle:
-    def __init__(self, styleSheet: StyleSheet, name_type: str, name: str) -> None:
+    def __init__(self, styleSheet: StyleSheet, name_type: str) -> None:
         self.styleSheet = styleSheet
-        # self.style: Style = {}
         self.type = name_type
-        self.name = name
+        self.name = None
+        self.init = False
 
     def name_change(self, new_name: str):
-        if self.delete_elem():
-            self.name = new_name
-            self.styleSheet.new_style_elem(self)
+        old_key: str = self.key()
         self.name = new_name
+        self.styleSheet.change_name_style_elem(old_key, self.key())
 
     def delete_elem(self):
         return self.styleSheet.delete_style_elem(self.key())
@@ -597,8 +596,14 @@ class PresentationStyle:
         self.styleSheet.translate_to_stylesheet(self.key())
 
     def change_style(self, style: str, value):
-        self.styleSheet.new_style_elem(self)
+        if not self.init:
+            self.new_style()
+        self.styleSheet.change_style_elem(self.key(), style, str(value))
+
+    def new_style(self):
+        self.styleSheet.new_style_elem(self.key())
+        self.init = True
 
     def key(self):
-        return f'{self.type}[name="{self.name}"]'
+        return f'{self.type}[name="{self.name}"]' if self.name is not None else f'{self.type}'
 

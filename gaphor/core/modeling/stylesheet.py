@@ -88,7 +88,8 @@ class StyleSheet(Element):
     def update_style_elems(self):
         temp = ""
         for k, v in self.style_elems.items():
-            temp += f"{k} {{{v};}}\n"
+            nested_items = "; ".join(f"{x}: {z}" for x, z in v.items())
+            temp+= f"{k} {{{nested_items}}}\n"
         return temp
 
     def change_style_elem(self, elem: str, style: str, value: str):

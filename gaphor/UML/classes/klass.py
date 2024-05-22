@@ -59,9 +59,7 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
     def change_name(self, event=None):
         if isinstance(event, AttributeUpdated) and self.diagram.styleSheet is not None:
             if self.presentation_style is None:
-                self.presentation_style = PresentationStyle(
-                    self.diagram.styleSheet, StyledItem(self).name(), self.subject.name
-                )
+                self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
             self.presentation_style.name_change(self.subject.name)
 
     def update_shapes(self, event=None):
