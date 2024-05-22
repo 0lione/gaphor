@@ -4,8 +4,10 @@ from gaphor import UML
 from gaphor.diagram.presentation import (
     ElementPresentation,
     Named,
+    PresentationStyle,
     text_name,
 )
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.diagram.shapes import Box, cairo_state, stroke
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_from_package, text_stereotypes
@@ -21,6 +23,10 @@ class PackageItem(Named, ElementPresentation):
         self.watch("subject[NamedElement].name")
         self.watch("subject[NamedElement].namespace.name")
         self.watch("subject.appliedStereotype.classifier.name")
+
+        self.watch("subject[Package].name", self.change_name)
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     def update_shapes(self, event=None):
         self.shape = Box(

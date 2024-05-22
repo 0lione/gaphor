@@ -57,6 +57,7 @@ class StyleSheet(Element):
 
     def compile_style_sheet(self) -> None:
         self.colorPickerResult = self.update_style_elems()
+        print(self.colorPickerResult)
         self._compiled_style_sheet = CompiledStyleSheet(
             SYSTEM_STYLE_SHEET,
             f"diagram {{ font-family: {self._system_font_family} }}",
@@ -67,9 +68,10 @@ class StyleSheet(Element):
         return self._compiled_style_sheet.copy()
 
     def postload(self):
-        self.recover_style_elems()
         super().postload()
+        self.recover_style_elems()
         self.compile_style_sheet()
+        print("after compiling")
 
     def handle(self, event):
         # Ensure compiled style sheet is always up-to-date:
@@ -82,7 +84,12 @@ class StyleSheet(Element):
         super().handle(event)
 
     def recover_style_elems(self):
-        self.styleSheet += self.colorPickerResult
+        temp = self.colorPickerResult
+        print(f"this is temp {temp}")
+        temp += self.styleSheet 
+        print(f"this is temp {temp}")
+        self.styleSheet = temp
+        print(self.styleSheet)
         self.colorPickerResult = ""
 
     def update_style_elems(self):

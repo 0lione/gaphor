@@ -3,6 +3,8 @@
 from gaphor.core.modeling import DrawContext
 from gaphor.diagram.presentation import LinePresentation
 from gaphor.diagram.shapes import pi, stroke
+from gaphor.diagram.presentation import PresentationStyle
+from gaphor.core.modeling.diagram import StyledItem
 
 
 class ContainmentItem(LinePresentation):
@@ -10,6 +12,7 @@ class ContainmentItem(LinePresentation):
         super().__init__(diagram, id)
         self.draw_head = draw_crossed_circle_head
 
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
 def draw_crossed_circle_head(context: DrawContext):
     cr = context.cairo

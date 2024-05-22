@@ -7,6 +7,8 @@ from gaphor.diagram.shapes import Box, cairo_state, draw_border
 from gaphor.diagram.support import represents
 from gaphor.UML.classes.stereotype import stereotype_compartments, stereotype_watches
 from gaphor.UML.compartments import name_compartment
+from gaphor.core.modeling.diagram import StyledItem
+from gaphor.diagram.presentation import PresentationStyle
 
 
 @represents(UML.Component)
@@ -20,6 +22,10 @@ class ComponentItem(Classified, ElementPresentation):
         self.watch("subject[Classifier].useCase", self.update_shapes)
         self.watch("children", self.update_shapes)
         stereotype_watches(self)
+
+        self.watch("subject[Component].name", self.change_name)
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     show_stereotypes: attribute[int] = attribute("show_stereotypes", int)
 

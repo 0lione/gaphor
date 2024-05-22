@@ -3,7 +3,6 @@ import logging
 from gaphor import UML
 from gaphor.core.format import format
 from gaphor.core.modeling.diagram import StyledItem
-from gaphor.core.modeling.event import AttributeUpdated
 from gaphor.core.modeling.properties import attribute
 from gaphor.diagram.presentation import (
     Classified,
@@ -43,6 +42,8 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
         operation_watches(self, "Class")
         stereotype_watches(self)
 
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
+
     show_stereotypes: attribute[int] = attribute("show_stereotypes", int)
 
     show_attributes: attribute[int] = attribute("show_attributes", int, default=True)
@@ -55,12 +56,6 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
         elif UML.recipes.is_metaclass(self.subject):
             return [self.diagram.gettext("metaclass")]
         return ()
-
-    def change_name(self, event=None):
-        if isinstance(event, AttributeUpdated) and self.diagram.styleSheet is not None:
-            if self.presentation_style is None:
-                self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
-            self.presentation_style.name_change(self.subject.name)
 
     def update_shapes(self, event=None):
         self.shape = Box(
