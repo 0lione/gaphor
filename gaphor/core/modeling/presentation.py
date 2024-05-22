@@ -47,7 +47,6 @@ class Presentation(Matrices, Element, Generic[S]):
         self.matrix.add_handler(self._on_matrix_changed)
         self._presentation_style = None
 
-
     subject: relation_one[S]
     diagram: relation_one[Diagram]
     parent: relation_one[Presentation]

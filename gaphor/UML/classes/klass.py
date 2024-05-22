@@ -2,6 +2,7 @@ import logging
 
 from gaphor import UML
 from gaphor.core.format import format
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.core.modeling.event import AttributeUpdated
 from gaphor.core.modeling.properties import attribute
 from gaphor.diagram.presentation import (
@@ -13,7 +14,6 @@ from gaphor.diagram.shapes import Box, CssNode, Text, draw_border, draw_top_sepa
 from gaphor.diagram.support import represents
 from gaphor.UML.classes.stereotype import stereotype_compartments, stereotype_watches
 from gaphor.UML.compartments import name_compartment
-from gaphor.core.modeling.diagram import StyledItem
 
 log = logging.getLogger(__name__)
 
@@ -37,8 +37,7 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
             "subject[Classifier].isAbstract", self.update_shapes
         )
 
-        # self._presentation_style = None
-        self.watch("subject[Class].name", self.test)
+        self.watch("subject[Class].name", self.change_name)
 
         attribute_watches(self, "Class")
         operation_watches(self, "Class")
@@ -50,14 +49,6 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
 
     show_operations: attribute[int] = attribute("show_operations", int, default=True)
 
-    # @property
-    # def presentation_style(self) -> PresentationStyle | None:
-    #     return self._presentation_style
-    #
-    # @presentation_style.setter
-    # def presentation_style(self, value: PresentationStyle | None = None):
-    #     self._presentation_style = value
-
     def additional_stereotypes(self):
         if isinstance(self.subject, UML.Stereotype):
             return [self.diagram.gettext("stereotype")]
@@ -65,7 +56,7 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
             return [self.diagram.gettext("metaclass")]
         return ()
 
-    def test(self, event=None):
+    def change_name(self, event=None):
         if isinstance(event, AttributeUpdated) and self.diagram.styleSheet is not None:
             if self.presentation_style is None:
                 self.presentation_style = PresentationStyle(

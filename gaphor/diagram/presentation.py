@@ -17,7 +17,6 @@ from gaphor.core.modeling.presentation import Presentation, S, literal_eval
 from gaphor.core.modeling.properties import attribute
 from gaphor.diagram.shapes import CssNode, Shape, Text, stroke, traverse_css_nodes
 from gaphor.diagram.text import TextAlign, middle_segment, text_point_at_line
-from gaphor.core.modeling.diagram import StyledItem
 
 DEFAULT_HEIGHT = 50
 DEFAULT_WIDTH = 100
@@ -581,9 +580,9 @@ class AttachedPresentation(HandlePositionUpdate, Presentation[S]):
 class PresentationStyle:
     def __init__(self, styleSheet: StyleSheet, name_type: str, name: str) -> None:
         self.styleSheet = styleSheet
-        self.style: Style = {}
-        self.type = name_type 
-        self.name = name 
+        # self.style: Style = {}
+        self.type = name_type
+        self.name = name
 
     def name_change(self, new_name: str):
         if self.delete_elem():
@@ -593,18 +592,13 @@ class PresentationStyle:
 
     def delete_elem(self):
         return self.styleSheet.delete_style_elem(self.key())
-    
+
     def translate_to_stylesheet(self):
         self.styleSheet.translate_to_stylesheet(self.key())
 
     def change_style(self, style: str, value):
-        if self.style.get(value) == value:
-            value = ""
-        self.style[style] = value
         self.styleSheet.new_style_elem(self)
 
     def key(self):
         return f'{self.type}[name="{self.name}"]'
 
-    def __str__(self) -> str:
-        return f"{','.join(f'{k}:{v}' for k, v in self.style.items())}"

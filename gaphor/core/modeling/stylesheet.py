@@ -56,6 +56,7 @@ class StyleSheet(Element):
         self.compile_style_sheet()
 
     def compile_style_sheet(self) -> None:
+        self.colorPickerResult = self.update_style_elems()
         self._compiled_style_sheet = CompiledStyleSheet(
             SYSTEM_STYLE_SHEET,
             f"diagram {{ font-family: {self._system_font_family} }}",
@@ -81,12 +82,6 @@ class StyleSheet(Element):
         super().handle(event)
 
     def recover_style_elems(self):
-        # for line in self.colorPickerResult.split("\n"):
-        #     parts = line.split("{")
-        #     if len(parts) == 2:
-        #         key = parts[0].strip()
-        #         value = parts[1].strip().rstrip("}").rstrip(";")
-        #         self.style_elems[key] = value
         self.styleSheet += self.colorPickerResult
         self.colorPickerResult = ""
 
@@ -96,18 +91,26 @@ class StyleSheet(Element):
             temp += f"{k} {{{v};}}\n"
         return temp
 
-    def new_style_elem(self, elem: PresentationStyle):
-        self.style_elems[elem.key()] = str(elem)
-        self.colorPickerResult = self.update_style_elems()
+    def change_style_elem(self, elem: str, style: str, value: str):
+        if self.style_elems.get(elem).get(style) == value:
+            value = ""
+        self.style_elems[elem][style] = value
         self.compile_style_sheet()
+
+    def new_style_elem(self, elem: str):
+        self.style_elems[elem] = {}
 
     def delete_style_elem(self, elem: str):
         if self.style_elems.get(elem) is not None:
             self.style_elems.pop(elem)
-            self.colorPickerResult = self.update_style_elems()
             self.compile_style_sheet()
             return True
         return False
+
+    def change_name_style_elem(self, elem: str, new_elem: str):
+        if self.style_elems.get(elem) is not None:
+            self.style_elems.update({new_elem : self.style_elems.pop(elem)})
+            self.compile_style_sheet()
     
     def translate_to_stylesheet(self, elem: str):
         if self.style_elems.get(elem) is not None:
