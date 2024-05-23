@@ -1,4 +1,4 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 from gaphor.core import Transaction
 from gaphor.core import transactional
@@ -18,11 +18,35 @@ class StyleEditor:
         if self.window is None:
             self.window = self.window_builder.get_object("style-editor")
             self.window.connect("close-request", self.close)
-            self.window_builder.get_object("color").connect("color-set", self.on_color_set)
-            self.window_builder.get_object("border-radius").connect("value-changed", self.on_border_radius_set)
-            self.window_builder.get_object("background-color").connect("color-set", self.on_background_color_set)
-            self.window_builder.get_object("text-color").connect("color-set", self.on_text_color_set)
+            self.color = self.window_builder.get_object("color")
+            self.border_radius = self.window_builder.get_object("border-radius")
+            self.background_color = self.window_builder.get_object("background-color")
+            self.text_color = self.window_builder.get_object("text-color")
+            self.fields()
         self.window.present()
+
+    def fields(self):
+        self.color.connect("color-set", self.on_color_set)
+        if self.subject.presentation_style.get_style("color"):
+            self.color.set_rgba(self.get_color("color"))
+
+        self.border_radius.connect("value-changed", self.on_border_radius_set)
+        if self.subject.presentation_style.get_style("border-radius"):
+            self.border_radius.set_value(int(float(self.subject.presentation_style.get_style("border-radius"))))
+
+        self.background_color.connect("color-set", self.on_background_color_set)
+        if self.subject.presentation_style.get_style("background-color"):
+            self.background_color.set_rgba(self.get_color("background-color"))
+
+        self.text_color.connect("color-set", self.on_text_color_set)
+        if self.subject.presentation_style.get_style("text-color"):
+            self.text_color.set_rgba(self.get_color("text-color"))
+
+    def get_color(self, color_type):
+        color = self.subject.presentation_style.get_style(color_type)
+        color = color.replace("rgba(", "").replace(")", "").split(", ")
+        color = Gdk.RGBA(red=int(color[0]), green=int(color[1]), blue=int(color[2]), alpha=float(color[3]))
+        return color
 
     def close(self, widget=None):
         if self.window:
