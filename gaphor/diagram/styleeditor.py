@@ -26,21 +26,21 @@ class StyleEditor:
         self.window.present()
 
     def fields(self):
-        self.color.connect("color-set", self.on_color_set)
         if self.subject.presentation_style.get_style("color"):
             self.color.set_rgba(self.get_color("color"))
+        self.color.connect("color-set", self.on_color_set)
 
-        self.border_radius.connect("value-changed", self.on_border_radius_set)
         if self.subject.presentation_style.get_style("border-radius"):
             self.border_radius.set_value(int(float(self.subject.presentation_style.get_style("border-radius"))))
+        self.border_radius.connect("value-changed", self.on_border_radius_set)
 
-        self.background_color.connect("color-set", self.on_background_color_set)
         if self.subject.presentation_style.get_style("background-color"):
             self.background_color.set_rgba(self.get_color("background-color"))
+        self.background_color.connect("color-set", self.on_background_color_set)
 
-        self.text_color.connect("color-set", self.on_text_color_set)
         if self.subject.presentation_style.get_style("text-color"):
             self.text_color.set_rgba(self.get_color("text-color"))
+        self.text_color.connect("color-set", self.on_text_color_set)
 
     def get_color(self, color_type):
         color = self.subject.presentation_style.get_style(color_type)
