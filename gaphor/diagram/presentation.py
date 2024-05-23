@@ -610,7 +610,9 @@ class PresentationStyle:
         self.init = True
 
     def get_style(self, style: str):
-        return self.styleSheet.get(self.key()).get(style)
+        if not self.init:
+            self.new_style ()
+        return self.styleSheet.get_style(self.key(), style)
 
     def key(self):
         return f'{self.type}[name="{self.name}"]' if self.name is not None else f'{self.type}'

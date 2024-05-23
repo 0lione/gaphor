@@ -41,6 +41,9 @@ class StyleSheet(Element):
     def style_elems(self) -> dict:
         return self._style_elems
 
+    def get_style(self, key: str, style: str) -> str | None:
+        return self.style_elems.get(key).get(style)
+
     @property
     def system_font_family(self) -> str:
         return self._system_font_family
@@ -109,6 +112,8 @@ class StyleSheet(Element):
             self.compile_style_sheet()
             return True
         return False
+
+
 
     def change_name_style_elem(self, elem: str, new_elem: str):
         if self.style_elems.get(elem) is not None:
