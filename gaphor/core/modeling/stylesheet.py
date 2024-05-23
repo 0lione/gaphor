@@ -56,8 +56,6 @@ class StyleSheet(Element):
         self.compile_style_sheet()
 
     def compile_style_sheet(self) -> None:
-        self.colorPickerResult = self.update_style_elems()
-        print(self.colorPickerResult)
         self._compiled_style_sheet = CompiledStyleSheet(
             SYSTEM_STYLE_SHEET,
             f"diagram {{ font-family: {self._system_font_family} }}",
@@ -84,12 +82,7 @@ class StyleSheet(Element):
         super().handle(event)
 
     def recover_style_elems(self):
-        temp = self.colorPickerResult
-        print(f"this is temp {temp}")
-        temp += self.styleSheet 
-        print(f"this is temp {temp}")
-        self.styleSheet = temp
-        print(self.styleSheet)
+        self.styleSheet += "\n" + self.colorPickerResult 
         self.colorPickerResult = ""
 
     def update_style_elems(self):
@@ -103,6 +96,7 @@ class StyleSheet(Element):
         if self.style_elems.get(elem).get(style) == value:
             value = ""
         self.style_elems[elem][style] = value
+        self.colorPickerResult = self.update_style_elems()
         self.compile_style_sheet()
 
     def new_style_elem(self, elem: str):
@@ -111,6 +105,7 @@ class StyleSheet(Element):
     def delete_style_elem(self, elem: str):
         if self.style_elems.get(elem) is not None:
             self.style_elems.pop(elem)
+            self.colorPickerResult = self.update_style_elems()
             self.compile_style_sheet()
             return True
         return False
@@ -118,6 +113,7 @@ class StyleSheet(Element):
     def change_name_style_elem(self, elem: str, new_elem: str):
         if self.style_elems.get(elem) is not None:
             self.style_elems.update({new_elem : self.style_elems.pop(elem)})
+            self.colorPickerResult = self.update_style_elems()
             self.compile_style_sheet()
     
     def translate_to_stylesheet(self, elem: str):
