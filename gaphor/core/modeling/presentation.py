@@ -12,6 +12,7 @@ from gaphas.item import Matrices
 from gaphor.core.modeling.element import Element, Handler, Id, UnlinkEvent
 from gaphor.core.modeling.event import RevertibleEvent
 from gaphor.core.modeling.properties import relation_many, relation_one
+from gaphor.core.modeling.event import AttributeUpdated
 
 if TYPE_CHECKING:
     from gaphor.core.modeling.diagram import Diagram
@@ -51,6 +52,11 @@ class Presentation(Matrices, Element, Generic[S]):
     diagram: relation_one[Diagram]
     parent: relation_one[Presentation]
     children: relation_many[Presentation]
+
+    def change_name(self, event=None):
+        if isinstance(event, AttributeUpdated) and self.presentation_style.styleSheet is not None: 
+            self.presentation_style.name_change(self.subject.name)
+
 
     @property
     def presentation_style(self) -> PresentationStyle | None:

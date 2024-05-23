@@ -9,6 +9,8 @@ from gaphor.diagram.presentation import LinePresentation
 from gaphor.diagram.shapes import Box
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_stereotypes
+from gaphor.diagram.presentation import PresentationStyle
+from gaphor.core.modeling.diagram import StyledItem
 
 
 @represents(
@@ -28,6 +30,8 @@ class GeneralizationItem(LinePresentation):
         self._handles[1].pos = (0, 0)
 
         self.watch("subject.appliedStereotype.classifier.name")
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     def draw_tail(self, context: DrawContext):
         cr = context.cairo

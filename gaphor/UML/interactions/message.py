@@ -54,9 +54,11 @@ from gaphor import UML
 from gaphor.diagram.presentation import (
     LinePresentation,
     Named,
+    PresentationStyle,
     get_center_pos,
     text_name,
 )
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.diagram.shapes import Box, cairo_state, stroke
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_stereotypes
@@ -101,6 +103,8 @@ class MessageItem(Named, LinePresentation[UML.Message]):
         self.watch("subject[NamedElement].name")
         self.watch("subject.appliedStereotype.classifier.name")
         self.watch("subject[Message].messageEnd", self._update_message_end)
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     def load(self, name, value):
         if name == "points":

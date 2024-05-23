@@ -22,6 +22,8 @@ from gaphor.diagram.support import represents
 from gaphor.i18n import i18nize
 from gaphor.UML.classes.interface import Folded, InterfacePort
 from gaphor.UML.compartments import text_stereotypes
+from gaphor.diagram.presentation import PresentationStyle
+from gaphor.core.modeling.diagram import StyledItem
 
 
 @represents(UML.Dependency, head=UML.Dependency.supplier, tail=UML.Dependency.client)
@@ -67,6 +69,8 @@ class DependencyItem(Named, LinePresentation):
 
         self.watch("subject[NamedElement].name")
         self.watch("subject.appliedStereotype.classifier.name")
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     auto_dependency: attribute[int] = attribute("auto_dependency", int, default=True)
 

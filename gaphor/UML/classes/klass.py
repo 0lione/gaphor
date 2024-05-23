@@ -2,7 +2,7 @@ import logging
 
 from gaphor import UML
 from gaphor.core.format import format
-from gaphor.core.modeling.diagram import StyledItem
+from gaphor.core.modeling.diagram import StyledItem 
 from gaphor.core.modeling.properties import attribute
 from gaphor.diagram.presentation import (
     Classified,
@@ -43,6 +43,7 @@ class ClassItem(Classified, ElementPresentation[UML.Class]):
         stereotype_watches(self)
 
         self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
+
 
     show_stereotypes: attribute[int] = attribute("show_stereotypes", int)
 

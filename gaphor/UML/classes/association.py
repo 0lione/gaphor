@@ -20,6 +20,7 @@ from gaphor.core.modeling.properties import association, attribute, enumeration
 from gaphor.diagram.presentation import (
     LinePresentation,
     Named,
+    PresentationStyle,
     get_center_pos,
     text_name,
 )
@@ -42,6 +43,7 @@ from gaphor.UML.informationflow import (
     watch_information_flow,
 )
 from gaphor.UML.umlfmt import format_association_end
+from gaphor.core.modeling.diagram import StyledItem
 
 half_pi = pi / 2
 
@@ -102,6 +104,8 @@ class AssociationItem(Named, LinePresentation[UML.Association]):
             )
 
         watch_information_flow(self, "Association", "abstraction")
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     head_subject = association("head_subject", UML.Property, upper=1)
     tail_subject = association("tail_subject", UML.Property, upper=1)

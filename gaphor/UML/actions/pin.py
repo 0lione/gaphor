@@ -1,5 +1,5 @@
 from gaphor import UML
-from gaphor.diagram.presentation import AttachedPresentation, Named
+from gaphor.diagram.presentation import AttachedPresentation, Named, PresentationStyle
 from gaphor.diagram.shapes import (
     Box,
     CssNode,
@@ -9,6 +9,7 @@ from gaphor.diagram.shapes import (
     VerticalAlign,
     draw_border,
 )
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_stereotypes
 from gaphor.UML.umlfmt import format_pin
@@ -30,6 +31,8 @@ class PinItem(Named, AttachedPresentation[UML.Pin]):
         self.watch("subject[TypedElement].type")
         self.watch("subject[MultiplicityElement].lowerValue")
         self.watch("subject[MultiplicityElement].upperValue")
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     def pin_type(self):
         return ""

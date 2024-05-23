@@ -85,7 +85,7 @@ class StyleSheet(Element):
         super().handle(event)
 
     def recover_style_elems(self):
-        self.styleSheet += "\n" + self.colorPickerResult 
+        self.styleSheet += "\n" + self.colorPickerResult if self.colorPickerResult else ""
         self.colorPickerResult = ""
 
     def update_style_elems(self):

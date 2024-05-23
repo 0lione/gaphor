@@ -3,7 +3,8 @@ ExtensionItem -- Graphical representation of an association.
 """
 
 from gaphor import UML
-from gaphor.diagram.presentation import LinePresentation, Named, text_name
+from gaphor.diagram.presentation import LinePresentation, Named, text_name, PresentationStyle
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.diagram.shapes import Box
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_stereotypes
@@ -29,6 +30,8 @@ class ExtensionItem(Named, LinePresentation):
 
         self.watch("subject[NamedElement].name")
         self.watch("subject.appliedStereotype.classifier.name")
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     def draw_head(self, context):
         cr = context.cairo

@@ -7,7 +7,8 @@ from gaphas.types import Pos
 from gaphor import UML
 from gaphor.core.modeling.element import Element
 from gaphor.core.modeling.properties import attribute
-from gaphor.diagram.presentation import ElementPresentation, Named, text_name
+from gaphor.diagram.presentation import ElementPresentation, Named, text_name, PresentationStyle
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.diagram.shapes import Box, CssNode, Text, draw_top_separator, stroke
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_stereotypes
@@ -27,6 +28,9 @@ class StateItem(ElementPresentation[UML.State], Named):
         self.watch("subject[State].region.name")
         self.watch("subject[State].region", self.update_shapes)
         self.watch("show_regions", self.update_shapes)
+        self.watch("subject[State].name", self.change_name)
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     show_regions: attribute[int] = attribute("show_regions", int, default=True)
 

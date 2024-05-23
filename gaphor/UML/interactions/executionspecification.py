@@ -30,9 +30,11 @@ from gaphor import UML
 from gaphor.core.modeling import Presentation
 from gaphor.diagram.presentation import (
     HandlePositionUpdate,
+    PresentationStyle,
     literal_eval,
     postload_connect,
 )
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.diagram.shapes import Box, draw_border
 from gaphor.diagram.support import represents
 from gaphor.UML.interactions.lifeline import BetweenPort
@@ -81,6 +83,8 @@ class ExecutionSpecificationItem(
         self._ports = [BetweenPort(nw, sw), BetweenPort(ne, se)]
 
         self._shape = Box(draw=draw_border)
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
     def handles(self):
         return self._handles

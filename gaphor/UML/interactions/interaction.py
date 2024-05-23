@@ -1,7 +1,8 @@
 """Interaction diagram item."""
 
 from gaphor import UML
-from gaphor.diagram.presentation import ElementPresentation, Named, text_name
+from gaphor.diagram.presentation import ElementPresentation, Named, text_name, PresentationStyle
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.diagram.shapes import Box, CssNode, stroke
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_stereotypes
@@ -26,6 +27,9 @@ class InteractionItem(Named, ElementPresentation):
 
         self.watch("subject[NamedElement].name")
         self.watch("subject.appliedStereotype.classifier.name")
+        self.watch("subject[Interaction].name", self.change_name)
+
+        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
 
 
 def draw_interaction(box, context, bounding_box):
