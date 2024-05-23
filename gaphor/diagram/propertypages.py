@@ -326,6 +326,7 @@ class StylePropertyPage(PropertyPageBase):
     """A button to open a easy-to-use CSS editor."""
 
     order = 300
+    style_editor = None
 
     def __init__(self, subject):
         super().__init__()
@@ -334,7 +335,7 @@ class StylePropertyPage(PropertyPageBase):
         self.propertypages_builder = new_builder("style-editor",
             signals={"open-style-editor": (self._on_open_style_editor,), },
         )
-        self.style_editor = None
+        self.has_style_editor = False
 
     def construct(self):
         if not self.subject:
@@ -343,13 +344,17 @@ class StylePropertyPage(PropertyPageBase):
         return self.propertypages_builder.get_object("style-editor")
 
     @transactional
-    def _on_open_style_editor(self, button) :
-        if self.style_editor is None:
-            self.style_editor = StyleEditor(self.subject, self._on_close_style_editor)
-        self.style_editor.present()
+    def _on_open_style_editor(self, button):
+        if not self.has_style_editor:
+            if StylePropertyPage.style_editor:
+                StylePropertyPage.style_editor.close()
+            StylePropertyPage.style_editor = StyleEditor(self.subject, self.close_style_editor)
+            self.has_style_editor = True
+        StylePropertyPage.style_editor.present()
 
-    def _on_close_style_editor(self):
-        self.style_editor = None
+    def close_style_editor(self):
+        StylePropertyPage.style_editor = None
+        self.has_style_editor = False
 
 
 def presentation_class(subject):
