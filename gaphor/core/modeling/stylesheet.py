@@ -122,4 +122,5 @@ class StyleSheet(Element):
         if self.style_elems.get(elem) is not None:
             nested_items = "; ".join(f"{k}: {v}" for k, v in self.style_elems.get(elem).items())
             self.styleSheet += "\n" + f"{elem} {{{nested_items}}}\n"
-            self.delete_style_elem(elem)
+            return self.delete_style_elem(elem)
+        return False

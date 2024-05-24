@@ -10,7 +10,7 @@ from gaphas.constraint import constraint
 from gaphas.geometry import Rectangle, distance_rectangle_point
 from gaphas.solver.constraint import BaseConstraint
 
-from gaphor.core.modeling.diagram import Diagram, DrawContext
+from gaphor.core.modeling.diagram import Diagram, DrawContext, StyledItem
 from gaphor.core.modeling.element import Id
 from gaphor.core.modeling.event import AttributeUpdated, RevertibleEvent
 from gaphor.core.modeling.presentation import Presentation, S, literal_eval
@@ -190,7 +190,14 @@ class ElementPresentation(gaphas.Element, HandlePositionUpdate, Presentation[S])
 
     def postload(self):
         super().postload()
+        self.recover_presentation_style()
         self.update_shapes()
+
+    def recover_presentation_style(self):
+        if self.subject.name is not None and self.diagram.styleSheet is not None:
+            self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
+            self.presentation_style.name_change(self.subject.name)
+
 
 
 class MinimalValueConstraint(BaseConstraint):
@@ -590,10 +597,12 @@ class PresentationStyle:
         self.styleSheet.change_name_style_elem(old_key, self.key())
 
     def delete_elem(self):
-        return self.styleSheet.delete_style_elem(self.key())
+        if self.styleSheet.delete_style_elem(self.key()):
+            self.init = False
 
     def translate_to_stylesheet(self):
-        self.styleSheet.translate_to_stylesheet(self.key())
+        if self.styleSheet.translate_to_stylesheet(self.key()):
+            self.init = False
 
     def change_style(self, style: str, value):
         if not self.init:
@@ -605,9 +614,8 @@ class PresentationStyle:
         self.init = True
 
     def get_style(self, style: str):
-        if not self.init:
-            self.new_style ()
-        return self.styleSheet.get_style(self.key(), style)
+        if self.init:
+            return self.styleSheet.get_style(self.key(), style)
 
     def key(self):
         return f'{self.type}[name="{self.name}"]' if self.name is not None else f'{self.type}'
