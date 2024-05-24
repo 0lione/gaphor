@@ -99,7 +99,12 @@
           </object>
         </child>
 
-
+        <child>
+          <object class="GtkButton" id="export">
+            <property name="label" translatable="yes">Export to Style Sheet</property>
+            <property name="halign">end</property>
+          </object>
+        </child>
 
       </object>
     </child>

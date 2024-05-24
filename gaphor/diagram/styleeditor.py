@@ -42,6 +42,8 @@ class StyleEditor:
             self.text_color.set_rgba(self.get_color("text-color"))
         self.text_color.connect("color-set", self.on_text_color_set)
 
+        self.window_builder.get_object("export").connect("clicked", self.on_export)
+
     def get_color(self, color_type):
         color = self.subject.presentation_style.get_style(color_type)
         color = color.replace("rgba(", "").replace(")", "").split(", ")
@@ -85,3 +87,6 @@ class StyleEditor:
         a = colors.alpha
         self.subject.presentation_style.change_style("text-color", f"rgba({r}, {g}, {b}, {a})")
 
+    @transactional
+    def on_export(self, widget):
+        self.subject.presentation_style.translate_to_stylesheet()
