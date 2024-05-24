@@ -59,7 +59,6 @@ class StyleSheet(Element):
         self.compile_style_sheet()
 
     def compile_style_sheet(self) -> None:
-        print(self.style_elems)
         self._compiled_style_sheet = CompiledStyleSheet(
             SYSTEM_STYLE_SHEET,
             f"diagram {{ font-family: {self._system_font_family} }}",
@@ -73,7 +72,6 @@ class StyleSheet(Element):
         super().postload()
         self.recover_style_elems()
         self.compile_style_sheet()
-        print("after compiling")
 
     def handle(self, event):
         # Ensure compiled style sheet is always up-to-date:
