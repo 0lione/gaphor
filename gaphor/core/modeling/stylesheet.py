@@ -97,9 +97,6 @@ class StyleSheet(Element):
         return temp
 
     def change_style_elem(self, elem: str, style: str, value: str):
-        print(f"change style {style} {value}")
-        if self.style_elems.get(elem).get(style) == value:
-            value = ""
         self.style_elems[elem][style] = value
         self.colorPickerResult = self.update_style_elems()
         self.compile_style_sheet()
