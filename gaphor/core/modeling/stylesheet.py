@@ -59,6 +59,7 @@ class StyleSheet(Element):
         self.compile_style_sheet()
 
     def compile_style_sheet(self) -> None:
+        print(self.style_elems)
         self._compiled_style_sheet = CompiledStyleSheet(
             SYSTEM_STYLE_SHEET,
             f"diagram {{ font-family: {self._system_font_family} }}",
@@ -96,6 +97,7 @@ class StyleSheet(Element):
         return temp
 
     def change_style_elem(self, elem: str, style: str, value: str):
+        print(f"change style {style} {value}")
         if self.style_elems.get(elem).get(style) == value:
             value = ""
         self.style_elems[elem][style] = value
@@ -123,5 +125,6 @@ class StyleSheet(Element):
     
     def translate_to_stylesheet(self, elem: str):
         if self.style_elems.get(elem) is not None:
-            self.styleSheet += self.style_elems.get(elem)
+            nested_items = "; ".join(f"{k}: {v}" for k, v in self.style_elems.get(elem).items())
+            self.styleSheet += "\n" + f"{elem} {{{nested_items}}}\n"
             self.delete_style_elem(elem)
