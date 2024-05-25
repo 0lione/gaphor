@@ -32,6 +32,10 @@ class Valued:
 
 class Classified(Named):
     """Marker for Classifier presentations."""
+    # def postload(self):
+    #     if self.subject is not None and self.subject.name is not None and self.diagram.styleSheet is not None:
+    #         self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
+    #         self.presentation_style.name_change(self.subject.name)
 
 
 def text_name(item: Presentation):
@@ -190,13 +194,8 @@ class ElementPresentation(gaphas.Element, HandlePositionUpdate, Presentation[S])
 
     def postload(self):
         super().postload()
-        self.recover_presentation_style()
         self.update_shapes()
 
-    def recover_presentation_style(self):
-        if self.subject.name is not None and self.diagram.styleSheet is not None:
-            self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
-            self.presentation_style.name_change(self.subject.name)
 
 
 
@@ -589,7 +588,6 @@ class PresentationStyle:
         self.styleSheet = styleSheet
         self.type = name_type
         self.name = None
-        self.init = False
 
     def name_change(self, new_name: str):
         old_key: str = self.key()
@@ -597,26 +595,28 @@ class PresentationStyle:
         self.styleSheet.change_name_style_elem(old_key, self.key())
 
     def delete_elem(self):
-        if self.styleSheet.delete_style_elem(self.key()):
-            self.init = False
+        if self.initialized():
+            self.styleSheet.delete_style_elem(self.key())
 
     def translate_to_stylesheet(self):
-        if self.styleSheet.translate_to_stylesheet(self.key()):
-            self.init = False
+        if self.initialized() and len(self.styleSheet.style_elems.get(self.key())) > 0:
+            self.styleSheet.translate_to_stylesheet(self.key())
 
     def change_style(self, style: str, value):
-        if not self.init:
+        if not self.initialized():
             self.new_style()
         self.styleSheet.change_style_elem(self.key(), style, str(value))
 
     def new_style(self):
         self.styleSheet.new_style_elem(self.key())
-        self.init = True
 
     def get_style(self, style: str):
-        if self.init:
-            return self.styleSheet.get_style(self.key(), style)
+        if not self.initialized():
+            self.new_style()
+        return self.styleSheet.get_style(self.key(), style)
 
     def key(self):
         return f'{self.type}[name="{self.name}"]' if self.name is not None else f'{self.type}'
-
+    
+    def initialized(self) -> bool:
+        return True if self.styleSheet.style_elems.get(self.key()) is not None else False

@@ -124,6 +124,11 @@ class Presentation(Matrices, Element, Generic[S]):
             self._on_matrix_changed(None, ())
         else:
             super().load(name, value)
+        try: 
+            if self.subject.name is not None:
+                self.presentation_style.name_change(self.subject.name)
+        except:
+            pass
 
     def inner_unlink(self, _unlink_event: UnlinkEvent) -> None:
         self._watcher.unsubscribe_all()

@@ -18,6 +18,7 @@ from gaphor.core.modeling import (
     ModelFlushed,
     ModelReady,
 )
+from gaphor.core.modeling.presentation import Presentation
 from gaphor.diagram.deletable import deletable
 from gaphor.diagram.diagramtoolbox import DiagramType
 from gaphor.diagram.event import DiagramOpened, DiagramSelectionChanged
@@ -261,6 +262,8 @@ class ModelBrowser(UIComponent, ActionProvider):
     @event_handler(ElementDeleted)
     def on_element_deleted(self, event: ElementDeleted):
         self.model.remove_element(event.element)
+        if isinstance(event.element, Presentation) and event.element.presentation_style is not None:
+            event.element.presentation_style.delete_elem()
 
     @event_handler(DerivedAdded, DerivedDeleted)
     def on_owned_element_changed(self, event):

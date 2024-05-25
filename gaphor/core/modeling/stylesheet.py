@@ -42,7 +42,8 @@ class StyleSheet(Element):
         return self._style_elems
 
     def get_style(self, key: str, style: str) -> str | None:
-        return self.style_elems.get(key).get(style)
+        if self.style_elems.get(key) is not None:
+            return self.style_elems.get(key).get(style)
 
     @property
     def system_font_family(self) -> str:
@@ -109,8 +110,6 @@ class StyleSheet(Element):
             self.compile_style_sheet()
             return True
         return False
-
-
 
     def change_name_style_elem(self, elem: str, new_elem: str):
         if self.style_elems.get(elem) is not None:
