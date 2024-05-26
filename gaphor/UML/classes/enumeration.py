@@ -1,13 +1,13 @@
 import logging
 
 from gaphor import UML
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.core.modeling.properties import attribute
 from gaphor.diagram.presentation import (
     Classified,
     ElementPresentation,
     PresentationStyle,
 )
-from gaphor.core.modeling.diagram import StyledItem
 from gaphor.diagram.shapes import Box, CssNode, Text, draw_border, draw_top_separator
 from gaphor.diagram.support import represents
 from gaphor.UML.classes.klass import (
@@ -47,7 +47,9 @@ class EnumerationItem(Classified, ElementPresentation[UML.Enumeration]):
         operation_watches(self, "Enumeration")
         stereotype_watches(self)
 
-        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
+        self.presentation_style = PresentationStyle(
+            self.diagram.styleSheet, StyledItem(self).name()
+        )
 
     show_stereotypes: attribute[int] = attribute("show_stereotypes", int)
 
@@ -68,9 +70,11 @@ class EnumerationItem(Classified, ElementPresentation[UML.Enumeration]):
             name_compartment(
                 self,
                 lambda: [
-                    self.diagram.gettext("valueType")
-                    if self.as_sysml_value_type
-                    else self.diagram.gettext("enumeration")
+                    (
+                        self.diagram.gettext("valueType")
+                        if self.as_sysml_value_type
+                        else self.diagram.gettext("enumeration")
+                    )
                 ],
             ),
             *(

@@ -85,14 +85,17 @@ class StyleSheet(Element):
         super().handle(event)
 
     def recover_style_elems(self):
-        self.styleSheet += "\n" + self.colorPickerResult if self.colorPickerResult else ""
+        self.styleSheet += (
+            "\n" + self.colorPickerResult if self.colorPickerResult else ""
+        )
         self.colorPickerResult = ""
 
     def update_style_elems(self):
         temp = ""
         for k, v in self.style_elems.items():
             nested_items = "; ".join(f"{x}: {z}" for x, z in v.items())
-            temp+= f"{k} {{{nested_items}}}\n"
+            nested_items += ";"
+            temp += f"{k} {{{nested_items}}}\n"
         return temp
 
     def change_style_elem(self, elem: str, style: str, value: str):
@@ -113,13 +116,15 @@ class StyleSheet(Element):
 
     def change_name_style_elem(self, elem: str, new_elem: str):
         if self.style_elems.get(elem) is not None:
-            self.style_elems.update({new_elem : self.style_elems.pop(elem)})
+            self.style_elems.update({new_elem: self.style_elems.pop(elem)})
             self.colorPickerResult = self.update_style_elems()
             self.compile_style_sheet()
-    
+
     def translate_to_stylesheet(self, elem: str):
         if self.style_elems.get(elem) is not None:
-            nested_items = "; ".join(f"{k}: {v}" for k, v in self.style_elems.get(elem).items())
+            nested_items = "; ".join(
+                f"{k}: {v}" for k, v in self.style_elems.get(elem).items()
+            )
             nested_items += ";"
             self.styleSheet += "\n" + f"{elem} {{{nested_items}}}\n"
             return self.delete_style_elem(elem)
