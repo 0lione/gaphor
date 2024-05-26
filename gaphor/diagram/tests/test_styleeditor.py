@@ -1,14 +1,14 @@
 from gi.repository import Gdk, Gtk
 
-from gaphor.core.modeling import Diagram
 from gaphor import UML
 from gaphor.UML.classes import ClassItem
 from gaphor.diagram.styleeditor import StyleEditor
 from gaphor.core.modeling import StyleSheet
 from gaphor.diagram.tests.fixtures import find
-from gaphor.core import transactional
 
-import sys
+
+from gaphor.transaction import Transaction
+from gaphor.ui.diagrampage import DiagramPage
 
 def test_style_editor_creation(diagram):
     item = diagram.create(ClassItem)
@@ -66,3 +66,53 @@ def test_set_text_color(diagram):
     text_color.set_rgba(rgba)
     style_editor.on_text_color_set(text_color)
     assert item.presentation_style.get_style("text-color") == "rgba(0, 0, 255, 1.0)"
+
+def test_change_name(create, diagram, element_factory, event_manager):
+    with Transaction(event_manager):
+        stylesheet = element_factory.create(StyleSheet)
+        item = create(ClassItem, UML.Class)
+        item.subject.name = "Name"
+        style_editor = StyleEditor(item, lambda : None)
+        style_editor.present()
+        color = find(style_editor.window, "color")
+        rgba = Gdk.RGBA()
+        rgba.parse("rgba(0, 0, 255, 1)")
+        color.set_rgba(rgba)
+        style_editor.on_color_set(color)
+        assert item.presentation_style.get_style("color") == "rgba(0, 0, 255, 1.0)"
+        item.subject.name = "New Name"
+        assert item.presentation_style.get_style("color") == "rgba(0, 0, 255, 1.0)"
+
+def test_export(create, diagram, element_factory, event_manager):
+    with Transaction(event_manager):
+        stylesheet = element_factory.create(StyleSheet)
+        item = create(ClassItem, UML.Class)
+        item.subject.name = "Name"
+        style_editor = StyleEditor(item, lambda : None)
+        style_editor.present()
+        color = find(style_editor.window, "color")
+        rgba = Gdk.RGBA()
+        rgba.parse("rgba(0, 0, 255, 1)")
+        color.set_rgba(rgba)
+        style_editor.on_color_set(color)
+        export = find(style_editor.window, "export")
+        style_editor.on_export(export)
+        assert item.presentation_style.get_style("color") is None
+        assert "rgba(0, 0, 255, 1.0)" in stylesheet.styleSheet
+    
+def test_remove_item(create, diagram, element_factory, event_manager, modeling_language):
+    page = DiagramPage(diagram, event_manager, modeling_language)
+    page.construct()
+    with Transaction(event_manager):
+        stylesheet = element_factory.create(StyleSheet)
+        item: ClassItem = create(ClassItem, UML.Class)
+        item.subject.name = "Name"
+        style_editor = StyleEditor(item, lambda : None)
+        style_editor.present()
+        color = find(style_editor.window, "color")
+        rgba = Gdk.RGBA()
+        rgba.parse("rgba(0, 0, 255, 1)")
+        color.set_rgba(rgba)
+        style_editor.on_color_set(color)
+        item.unlink()
+        assert len(stylesheet.style_elems) == 0
