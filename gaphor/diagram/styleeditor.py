@@ -46,9 +46,9 @@ class StyleEditor:
 
     def get_color(self, color_type):
         color = self.subject.presentation_style.get_style(color_type)
-        color = color.replace("rgba(", "").replace(")", "").split(", ")
-        color = Gdk.RGBA(red=int(color[0]), green=int(color[1]), blue=int(color[2]), alpha=float(color[3]))
-        return color
+        rgba = Gdk.RGBA()
+        rgba.parse(color)
+        return rgba
 
     def close(self, widget=None):
         if self.window:
