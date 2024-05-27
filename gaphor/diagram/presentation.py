@@ -10,7 +10,7 @@ from gaphas.constraint import constraint
 from gaphas.geometry import Rectangle, distance_rectangle_point
 from gaphas.solver.constraint import BaseConstraint
 
-from gaphor.core.modeling.diagram import Diagram, DrawContext, StyledItem
+from gaphor.core.modeling.diagram import Diagram, DrawContext
 from gaphor.core.modeling.element import Id
 from gaphor.core.modeling.event import AttributeUpdated, RevertibleEvent
 from gaphor.core.modeling.presentation import Presentation, S, literal_eval
@@ -32,10 +32,6 @@ class Valued:
 
 class Classified(Named):
     """Marker for Classifier presentations."""
-    # def postload(self):
-    #     if self.subject is not None and self.subject.name is not None and self.diagram.styleSheet is not None:
-    #         self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
-    #         self.presentation_style.name_change(self.subject.name)
 
 
 def text_name(item: Presentation):
@@ -195,8 +191,6 @@ class ElementPresentation(gaphas.Element, HandlePositionUpdate, Presentation[S])
     def postload(self):
         super().postload()
         self.update_shapes()
-
-
 
 
 class MinimalValueConstraint(BaseConstraint):
@@ -584,10 +578,10 @@ class AttachedPresentation(HandlePositionUpdate, Presentation[S]):
 
 
 class PresentationStyle:
-    def __init__(self, styleSheet: StyleSheet, name_type: str) -> None:
+    def __init__(self, styleSheet, name_type: str) -> None:
         self.styleSheet = styleSheet
         self.type = name_type
-        self.name = None
+        self.name: str | None = None
 
     def name_change(self, new_name: str):
         old_key: str = self.key()
@@ -616,7 +610,13 @@ class PresentationStyle:
         return self.styleSheet.get_style(self.key(), style)
 
     def key(self):
-        return f'{self.type}[name="{self.name}"]' if self.name is not None else f'{self.type}'
-    
+        return (
+            f'{self.type}[name="{self.name}"]'
+            if self.name is not None
+            else f"{self.type}"
+        )
+
     def initialized(self) -> bool:
-        return True if self.styleSheet.style_elems.get(self.key()) is not None else False
+        return (
+            True if self.styleSheet.style_elems.get(self.key()) is not None else False
+        )

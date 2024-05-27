@@ -3,9 +3,6 @@ from __future__ import annotations
 import importlib.resources
 import textwrap
 
-# from gaphor.diagram.presentation import PresentationStyle
-# from gaphor.transaction import Transaction
-# from gaphor.core.eventmanager import EventManager
 from gaphor.core.modeling.element import Element
 from gaphor.core.modeling.event import AttributeUpdated
 from gaphor.core.modeling.properties import attribute
@@ -42,8 +39,10 @@ class StyleSheet(Element):
         return self._style_elems
 
     def get_style(self, key: str, style: str) -> str | None:
-        if self.style_elems.get(key) is not None:
-            return self.style_elems.get(key).get(style)
+        elem: dict | None = self.style_elems.get(key)
+        if elem is not None:
+            return elem.get(style)
+        return None
 
     @property
     def system_font_family(self) -> str:
@@ -52,11 +51,6 @@ class StyleSheet(Element):
     @system_font_family.setter
     def system_font_family(self, font_family: str):
         self._system_font_family = font_family
-        self.compile_style_sheet()
-
-    @style_elems.setter
-    def style_elems(self, newset: set):
-        self._style_elems = newset
         self.compile_style_sheet()
 
     def compile_style_sheet(self) -> None:
@@ -85,14 +79,16 @@ class StyleSheet(Element):
         super().handle(event)
 
     def recover_style_elems(self):
-        self.styleSheet += "\n" + self.colorPickerResult if self.colorPickerResult else ""
+        self.styleSheet += (
+            "\n" + self.colorPickerResult if self.colorPickerResult else ""
+        )
         self.colorPickerResult = ""
 
     def update_style_elems(self):
         temp = ""
         for k, v in self.style_elems.items():
             nested_items = "; ".join(f"{x}: {z}" for x, z in v.items())
-            temp+= f"{k} {{{nested_items}}}\n"
+            temp += f"{k} {{{nested_items}}}\n"
         return temp
 
     def change_style_elem(self, elem: str, style: str, value: str):
@@ -113,13 +109,14 @@ class StyleSheet(Element):
 
     def change_name_style_elem(self, elem: str, new_elem: str):
         if self.style_elems.get(elem) is not None:
-            self.style_elems.update({new_elem : self.style_elems.pop(elem)})
+            self.style_elems.update({new_elem: self.style_elems.pop(elem)})
             self.colorPickerResult = self.update_style_elems()
             self.compile_style_sheet()
-    
+
     def translate_to_stylesheet(self, elem: str):
-        if self.style_elems.get(elem) is not None:
-            nested_items = "; ".join(f"{k}: {v}" for k, v in self.style_elems.get(elem).items())
+        elem_v = self.style_elems.get(elem)
+        if elem_v is not None:
+            nested_items = "; ".join(f"{k}: {v}" for k, v in elem_v.items())
             nested_items += ";"
             self.styleSheet += "\n" + f"{elem} {{{nested_items}}}\n"
             return self.delete_style_elem(elem)
