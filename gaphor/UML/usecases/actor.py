@@ -10,8 +10,13 @@ from gaphas.position import Position
 from gaphas.solver import REQUIRED, STRONG, variable
 
 from gaphor import UML
-from gaphor.diagram.presentation import Classified, ElementPresentation, text_name, PresentationStyle
 from gaphor.core.modeling.diagram import StyledItem
+from gaphor.diagram.presentation import (
+    Classified,
+    ElementPresentation,
+    PresentationStyle,
+    text_name,
+)
 from gaphor.diagram.shapes import Box, IconBox, stroke
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_stereotypes
@@ -69,7 +74,9 @@ class ActorItem(Classified, ElementPresentation):
         self.watch("subject[Classifier].isAbstract", self.update_shapes)
         self.watch("subject[Actor].name", self.change_name)
 
-        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
+        self.presentation_style = PresentationStyle(
+            self.diagram.styleSheet, StyledItem(self).name()
+        )
 
     def update_shapes(self, event=None):
         self.shape = IconBox(

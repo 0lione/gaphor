@@ -1,8 +1,13 @@
 """Use case inclusion relationship."""
 
 from gaphor import UML
-from gaphor.diagram.presentation import LinePresentation, Named, text_name, PresentationStyle
 from gaphor.core.modeling.diagram import StyledItem
+from gaphor.diagram.presentation import (
+    LinePresentation,
+    Named,
+    PresentationStyle,
+    text_name,
+)
 from gaphor.diagram.shapes import Box, draw_arrow_head
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_stereotypes
@@ -30,4 +35,6 @@ class IncludeItem(Named, LinePresentation):
         )
         self.draw_head = draw_arrow_head
 
-        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
+        self.presentation_style = PresentationStyle(
+            self.diagram.styleSheet, StyledItem(self).name()
+        )

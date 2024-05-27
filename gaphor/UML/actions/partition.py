@@ -1,18 +1,17 @@
 """Activity Partition item."""
 
-
 from gaphas.geometry import Rectangle
 from gaphas.item import NW, SE
 from gaphas.types import Pos
 
 from gaphor import UML
 from gaphor.core.modeling import DrawContext
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.core.modeling.properties import association, relation_many
 from gaphor.diagram.presentation import ElementPresentation, PresentationStyle
 from gaphor.diagram.shapes import DEFAULT_PADDING, Box, CssNode, Orientation, stroke
 from gaphor.diagram.support import represents
 from gaphor.diagram.text import Layout
-from gaphor.core.modeling.diagram import StyledItem
 
 HEADER_HEIGHT: int = 29
 
@@ -32,7 +31,9 @@ class PartitionItem(ElementPresentation[UML.ActivityPartition]):
         self.handles()[NW].pos.add_handler(self.update_width)
         self.handles()[SE].pos.add_handler(self.update_width)
 
-        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
+        self.presentation_style = PresentationStyle(
+            self.diagram.styleSheet, StyledItem(self).name()
+        )
 
     def update_width(self, pos, oldpos) -> None:
         if self._loading:
@@ -126,9 +127,11 @@ class PartitionItem(ElementPresentation[UML.ActivityPartition]):
             cr.move_to(partition_width * num, 0)
             cr.line_to(partition_width * num, bounding_box.height)
             layout.set(
-                text=f"{partition.name}: {partition.represents.name}"
-                if isinstance(partition.represents, UML.NamedElement)
-                else partition.name
+                text=(
+                    f"{partition.name}: {partition.represents.name}"
+                    if isinstance(partition.represents, UML.NamedElement)
+                    else partition.name
+                )
             )
             cr.move_to(partition_width * num + padding_left, padding_top)
             layout.show_layout(cr)

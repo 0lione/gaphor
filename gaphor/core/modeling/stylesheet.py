@@ -88,6 +88,7 @@ class StyleSheet(Element):
         temp = ""
         for k, v in self.style_elems.items():
             nested_items = "; ".join(f"{x}: {z}" for x, z in v.items())
+            nested_items += ";"
             temp += f"{k} {{{nested_items}}}\n"
         return temp
 
@@ -114,9 +115,10 @@ class StyleSheet(Element):
             self.compile_style_sheet()
 
     def translate_to_stylesheet(self, elem: str):
-        elem_v = self.style_elems.get(elem)
-        if elem_v is not None:
-            nested_items = "; ".join(f"{k}: {v}" for k, v in elem_v.items())
+        if self.style_elems.get(elem) is not None:
+            nested_items = "; ".join(
+                f"{k}: {v}" for k, v in self.style_elems.get(elem).items()
+            )
             nested_items += ";"
             self.styleSheet += "\n" + f"{elem} {{{nested_items}}}\n"
             return self.delete_style_elem(elem)

@@ -82,6 +82,7 @@ def test_internals_page_for_presentation(create):
     assert "CommentItem" in text
     assert "gaphor.core.modeling.coremodel.Comment" in text
 
+
 def test_style_editor_page(diagram):
     item = diagram.create(Line)
     property_page = StylePropertyPage(item)

@@ -1,4 +1,5 @@
 from gaphor import UML
+from gaphor.core.modeling.diagram import StyledItem
 from gaphor.core.modeling.properties import attribute
 from gaphor.diagram.presentation import (
     AttachedPresentation,
@@ -8,7 +9,6 @@ from gaphor.diagram.presentation import (
     connect,
     text_name,
 )
-from gaphor.core.modeling.diagram import StyledItem
 from gaphor.diagram.shapes import Box, CssNode, Text, draw_border
 from gaphor.diagram.support import represents
 from gaphor.UML.compartments import text_stereotypes
@@ -36,7 +36,9 @@ class ActivityItem(Classified, ElementPresentation):
 
         self.watch("subject[Activity].name", self.change_name)
 
-        self.presentation_style = PresentationStyle(self.diagram.styleSheet, StyledItem(self).name())
+        self.presentation_style = PresentationStyle(
+            self.diagram.styleSheet, StyledItem(self).name()
+        )
 
     def postload(self):
         super().postload()
